@@ -14,13 +14,14 @@ function init() {
   ex = new Example();
 
   var fxgraph = new Fx.Graph($('box1'), {
+    controller: ex,
     duration: 3000,
     transition: Fx.Transitions.Cubic.easeIn,
     graph: {
       start: {
         selector: '.start',
         events: [
-          {type:'step1', source:ex, next:'step1'}
+          {type:'step1', next:'step1'}
         ]
       },
       step1: {
