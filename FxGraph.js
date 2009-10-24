@@ -13,6 +13,7 @@ Fx.Graph = new Class({
     this.controller = options.controller;
     this.graph = options.graph;
     this.direction = 'next';
+    this.delays = [];
     this.processStates(options.graph);
     this.element.set('morph', {
       duration: options.duration,
@@ -45,6 +46,10 @@ Fx.Graph = new Class({
           if(stateEvent.state) {
             nextState = stateEvent.state;
           }
+          if(this.delays.length > 0) {
+            this.delays.each($clear);
+            this.delays = [];
+          }
           this.setState(nextState);
         }.bind(this));
       }, this);
@@ -63,6 +68,7 @@ Fx.Graph = new Class({
       of triggering the morph to that state.
   */
   setState: function(name, animate) {
+    console.log('setState', name);
     this.transitionState = name;
     if(animate === false) return;
     var state = this.graph[name];
@@ -83,7 +89,7 @@ Fx.Graph = new Class({
     if(state.onComplete) state.onComplete();
     if(state.hold) {
       console.log('hold!')
-      this.setState.delay(state.hold.duration, this, [state[this.direction]]);
+      this.delays.push(this.setState.delay(state.hold.duration, this, [state[this.direction]]));
     } else if(state[this.direction]) {
       this.setState(state[this.direction]);
     }
