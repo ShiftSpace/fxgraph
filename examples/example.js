@@ -20,7 +20,7 @@ function init() {
       start: {
         selector: '.start',
         events: [
-          {type:'step1', obj:ex, next:'step1'}
+          {type:'step1', source:ex, next:'step1'}
         ]
       },
       step1: {
@@ -31,5 +31,5 @@ function init() {
   
   $('step1').addEvent('click', function() {
     ex.fireEvent('step1');
-  }.bind(this));
+  });
 }

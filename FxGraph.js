@@ -15,13 +15,9 @@ Fx.Graph = new Class({
     for(var name in graph) {
       state = graph[name];
       if(state.events) state.events.each(function(evt) {
-        console.log("adding event", evt.type, "to", evt.obj.name);
-        console.log(evt.obj == ex);
-        evt.obj.addEvent(evt.type, function() {
+        evt.source.addEvent(evt.type, function(evt) {
           this.setState(name);
         }.bind(this));
-        window.foo = evt.obj;
-        console.log(evt.obj);
       }, this);
     }
   },
