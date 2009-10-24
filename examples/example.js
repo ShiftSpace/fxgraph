@@ -37,8 +37,10 @@ function init() {
         next: 'step1',
         selector: '.start',
         events: [
-          {type:'shiftdown', direction:'next'},
-          {type:'shiftup', state:'start', direction:'previous'}
+          {type: 'mouseover', direction: 'next', flag: 'mouse'},
+          {type: 'mouseout', direction: 'previous', unflag: 'mouse'},
+          {type: 'shiftdown', direction: 'next', condition: {not: ['mouse']}},
+          {type: 'shiftup', state: 'start', direction: 'previous', condition: {not: ['mouse']}}
         ]
       },
       step1: {
@@ -47,8 +49,10 @@ function init() {
         selector: '.step1',
         hold: {duration: 1000},
         events: [
-          {type:'shiftdown', direction:'next'},
-          {type:'shiftup', state:'start', direction:'previous'}
+          {type: 'mouseover', direction: 'next', flag: 'mouse'},
+          {type: 'mouseout', state: 'start', direction: 'previous', unflag: 'mouse'},
+          {type: 'shiftdown', direction: 'next', condition: {not: ['mouse']}},
+          {type: 'shiftup', state: 'start', direction: 'previous', condition: {not: ['mouse']}}
         ]
       },
       step2: {
@@ -57,15 +61,17 @@ function init() {
         selector: '.step2',
         hold: {duration: 1000},
         events: [
-          {type:'shiftdown', direction:'next'},
-          {type:'shiftup', direction:'previous'}
+          {type: 'mouseover', direction: 'next', flag: 'mouse'},
+          {type: 'mouseout', direction: 'previous', unflag: 'mouse'},
+          {type: 'shiftdown', direction: 'next', condition: {not: ['mouse']}},
+          {type: 'shiftup', direction: 'previous', condition: {not: ['mouse']}}
         ]
       },
       step3: {
         previous: 'step2',
         selector: '.step3',
         events: [
-          {type:'reset', state:'step1'}
+          {type: 'reset', state: 'step1'}
         ]
       }
     }

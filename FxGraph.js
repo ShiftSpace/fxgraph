@@ -68,7 +68,6 @@ Fx.Graph = new Class({
       of triggering the morph to that state.
   */
   setState: function(name, animate) {
-    console.log('setState', name);
     this.transitionState = name;
     if(animate === false) return;
     var state = this.graph[name];
@@ -85,10 +84,8 @@ Fx.Graph = new Class({
   onStateArrive: function() {
     this.currentState = this.transitionState;
     var state = this.graph[this.currentState];
-    console.log('onStateArrive', this.currentState);
     if(state.onComplete) state.onComplete();
     if(state.hold) {
-      console.log('hold!')
       this.delays.push(this.setState.delay(state.hold.duration, this, [state[this.direction]]));
     } else if(state[this.direction]) {
       this.setState(state[this.direction]);
