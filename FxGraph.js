@@ -12,10 +12,12 @@ Fx.Graph = new Class({
     this.element = ($type(el) == 'string') ? $(el) : el;
     this.controller = options.controller;
     this.graph = options.graph;
+    this.direction = null;
     this.processStates(options.graph);
     this.element.set('morph', {
       duration: options.duration,
-      transition: options.transition
+      transition: options.transition,
+      onComplete: this.onStateArrive.bind(this)
     });
   },
   
@@ -30,9 +32,17 @@ Fx.Graph = new Class({
   processStates: function(graph){
     for(var name in graph) {
       state = graph[name];
+      if(state.first) this.setState(name, false);
       if(state.events) state.events.each(function(evt) {
         this.controller.addEvent(evt.type, function(evt) {
-          this.setState(name);
+          var nextState;
+          if(evt.direction) {
+            this.direction = evt.direction;
+            nextState = state[this.direction];
+          } else {
+            nextState = event.state;
+          }
+          this.setState(nextState);
         }.bind(this));
       }, this);
     }
@@ -42,24 +52,35 @@ Fx.Graph = new Class({
     Function: state
       Return the current state of the animation graph.
   */
-  state: function() {
-    return this.__currentState;
-  },
+  state: function() { return this.currentState; },
   
   /*
     Function: setState
       Set the current state of the graph. Has the side effect
       of triggering the morph to that state.
   */
-  setState: function(name) {
+  setState: function(name, animate) {
+    this.currentState = name;
+    if(animate === false) return;
     var state = this.graph[name];
     this.cancel();
-    this.__currentState = name;
-    if(state.hold) {
-      this.element.morph.removeEvents('onComplete');
-      this.element.morph.onComplete(this.setState.delay(state.hold.duration, this, [state.hold.next]));
-    }
     this.element.morph(state.selector);
+  },
+  
+  /*
+    Function: onStateArrive
+      Call on each time the graph arrives at a state. If there's
+      a hold, delayed execution to the next state. The next state
+      is based on the current direction of the graph.
+  */
+  onStateArrive: function() {
+    var state = this.currentState;
+    if(state.onComplete) state.onComplete();
+    if(state.hold) {
+      this.setState.delay(state.hold.duration, this, [state[this.direction]]);
+    } else {
+      this.setState(state[this.direction]);
+    }
   },
   
   /*
