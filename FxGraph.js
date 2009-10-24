@@ -32,12 +32,11 @@ Fx.Graph = new Class({
   processStates: function(graph){
     $H(graph).each(function(state, name) {
       if(state.first) {
-        this.setState(name, false);
-        this.arrived = true;
+        this.currentState = name;
       }
       if(state.events) state.events.each(function(stateEvent) {
         this.controller.addEvent(stateEvent.type, function(evt) {
-          if(this.currentState != name || !this.arrived) return;
+          if(this.currentState != name) return;
           var nextState;
           if(stateEvent.direction) {
             this.direction = stateEvent.direction;
@@ -64,8 +63,7 @@ Fx.Graph = new Class({
   */
   setState: function(name, animate) {
     console.log('setState', name);
-    this.arrived = false;
-    this.currentState = name;
+    this.transitionState = name;
     if(animate === false) return;
     var state = this.graph[name];
     this.cancel();
@@ -79,8 +77,7 @@ Fx.Graph = new Class({
       is based on the current direction of the graph.
   */
   onStateArrive: function() {
-    this.arrived = true;
-    var state = this.currentState;
+    var state = this.currentState = this.transitionState;
     if(state.onComplete) state.onComplete();
     if(state.hold) {
       this.setState.delay(state.hold.duration, this, [state[this.direction]]);
