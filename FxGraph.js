@@ -1,3 +1,11 @@
+/*
+  Class: Fx.Graph
+    Class for simplifying multistep animations that are driven by
+    user generated events - especially via the keybard/mouse. You define
+    a graph of states and a controller object. The controller object
+    will generate events that will drive the animation based on the
+    graph option passed in via the Fx.Graph initializer.
+*/
 Fx.Graph = new Class({
   Implements: [Options, Events],
 
@@ -14,6 +22,7 @@ Fx.Graph = new Class({
     this.graph = options.graph;
     this.direction = 'next';
     this.delays = [];
+    this.flags = {};
     this.processStates(options.graph);
     this.element.set('morph', {
       duration: options.duration,
@@ -50,6 +59,8 @@ Fx.Graph = new Class({
             this.delays.each($clear);
             this.delays = [];
           }
+          if(stateEvent.flag) this.flags[stateEvent.flag] = true
+          if(stateEvent.unflag) delete this.flags[stateEvent.unflag];
           this.setState(nextState);
         }.bind(this));
       }, this);

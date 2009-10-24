@@ -18,6 +18,14 @@ var Example = new Class({
       if(evt.code == 16) {
         this.fireEvent('shiftup');
       }
+      if(evt.key == 'r') {
+        this.fireEvent('reset');
+      }
+    }.bind(this));
+    
+    $('box1').addEvent('mouseenter', function(evt) {
+      evt = new Event(evt);
+      this.fireEvent('mouseover');
     }.bind(this));
   }
 });
@@ -29,7 +37,7 @@ function init() {
 
   var fxgraph = new Fx.Graph($('box1'), {
     controller: ex,
-    duration: 500,
+    duration: 400,
     transition: Fx.Transitions.Cubic.easeIn,
     graph: {
       start: {
@@ -37,10 +45,10 @@ function init() {
         next: 'step1',
         selector: '.start',
         events: [
-          {type: 'mouseover', direction: 'next', flag: 'mouse'},
-          {type: 'mouseout', direction: 'previous', unflag: 'mouse'},
-          {type: 'shiftdown', direction: 'next', condition: {not: ['mouse']}},
-          {type: 'shiftup', state: 'start', direction: 'previous', condition: {not: ['mouse']}}
+          {type: 'mouseover', state: 'step3', flag: 'mouse'},
+          {type: 'mouseout', state: 'start', direction:'previous', unflag: 'mouse', condition: {not: ['shift']}},
+          {type: 'shiftdown', direction: 'next', flag: 'shift', condition: {not: ['mouse']}},
+          {type: 'shiftup', state: 'start', direction: 'previous', unflag: 'shift', condition: {not: ['mouse']}}
         ]
       },
       step1: {
@@ -49,10 +57,10 @@ function init() {
         selector: '.step1',
         hold: {duration: 1000},
         events: [
-          {type: 'mouseover', direction: 'next', flag: 'mouse'},
-          {type: 'mouseout', state: 'start', direction: 'previous', unflag: 'mouse'},
-          {type: 'shiftdown', direction: 'next', condition: {not: ['mouse']}},
-          {type: 'shiftup', state: 'start', direction: 'previous', condition: {not: ['mouse']}}
+          {type: 'mouseover', state: 'step3', flag: 'mouse'},
+          {type: 'mouseout', state: 'start', direction:'previous', unflag: 'mouse', condition: {not: ['shift']}},
+          {type: 'shiftdown', direction: 'next', flag: 'shift', condition: {not: ['mouse']}},
+          {type: 'shiftup', state: 'start', direction: 'previous', unflag: 'shift', condition: {not: ['mouse']}}
         ]
       },
       step2: {
@@ -61,17 +69,18 @@ function init() {
         selector: '.step2',
         hold: {duration: 1000},
         events: [
-          {type: 'mouseover', direction: 'next', flag: 'mouse'},
-          {type: 'mouseout', direction: 'previous', unflag: 'mouse'},
-          {type: 'shiftdown', direction: 'next', condition: {not: ['mouse']}},
-          {type: 'shiftup', direction: 'previous', condition: {not: ['mouse']}}
+          {type: 'mouseover', direction: 'step3', flag: 'mouse'},
+          {type: 'mouseout', state: 'start', direction:'previous', unflag: 'mouse', condition: {not: ['shift']}},
+          {type: 'shiftdown', direction: 'next', flag: 'shift', condition: {not: ['mouse']}},
+          {type: 'shiftup', direction: 'previous', unflag: 'shift', condition: {not: ['mouse']}}
         ]
       },
       step3: {
         previous: 'step2',
         selector: '.step3',
         events: [
-          {type: 'reset', state: 'step1'}
+          {type: 'mouseout', state: 'step1'},
+          {type: 'reset', state: 'step1', direction: 'previous'}
         ]
       }
     }
