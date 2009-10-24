@@ -76,9 +76,12 @@ Fx.Graph = new Class({
       is based on the current direction of the graph.
   */
   onStateArrive: function() {
-    var state = this.currentState = this.transitionState;
+    this.currentState = this.transitionState;
+    var state = this.graph[this.currentState];
+    console.log('onStateArrive', this.currentState);
     if(state.onComplete) state.onComplete();
     if(state.hold) {
+      console.log('hold!')
       this.setState.delay(state.hold.duration, this, [state[this.direction]]);
     } else if(state[this.direction]) {
       this.setState(state[this.direction]);
