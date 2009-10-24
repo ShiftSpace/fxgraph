@@ -38,7 +38,7 @@ function init() {
         selector: '.start',
         events: [
           {type:'shiftdown', direction:'next'},
-          {type:'shiftup', state:'start'}
+          {type:'shiftup', state:'start', direction:'previous'}
         ]
       },
       step1: {
@@ -47,24 +47,25 @@ function init() {
         selector: '.step1',
         hold: {duration: 1000},
         events: [
-          {type:'shiftdown', direction: 'next'},
-          {type:'shiftup', state:'start'}
+          {type:'shiftdown', direction:'next'},
+          {type:'shiftup', state:'start', direction:'previous'}
         ]
       },
       step2: {
-        previous: 'step2',
+        previous: 'step1',
         next: 'step3',
         selector: '.step2',
         hold: {duration: 1000},
         events: [
-          {type:'shiftup', state:'step1'}
+          {type:'shiftdown', direction:'next'},
+          {type:'shiftup', direction:'previous'}
         ]
       },
       step3: {
         previous: 'step2',
         selector: '.step3',
         events: [
-          {type:'shiftup', state:'step1'}
+          {type:'reset', state:'step1'}
         ]
       }
     }

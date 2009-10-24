@@ -41,7 +41,8 @@ Fx.Graph = new Class({
           if(stateEvent.direction) {
             this.direction = stateEvent.direction;
             nextState = state[this.direction];
-          } else {
+          } 
+          if(stateEvent.state) {
             nextState = stateEvent.state;
           }
           this.setState(nextState);
