@@ -1,29 +1,29 @@
 Fx.Graph = new Class({
   Implements: [Options, Events],
-  
-  defaults: {
-    
-  },
 
   initialize: function(el, options) {
     this.element = el;
-    this.setOptions(this.defaults, options);
-    this.graph = this.options.graph;
-    this.processStates(this.options.graph);
+    this.graph = options.graph;
+    this.processStates(options.graph);
     this.element.set('morph', {
-      duration: this.options.duration,
-      transition: this.options.transition
+      duration: options.duration,
+      transition: options.transition
     });
   },
   
   processStates: function(graph){
-    $H(graph).each(function(state, name) {
-      if(state.events) state.events.each(function(event) {
-        event.object.addEvent(event.type, function() {
+    for(var name in graph) {
+      state = graph[name];
+      if(state.events) state.events.each(function(evt) {
+        console.log("adding event", evt.type, "to", evt.obj.name);
+        console.log(evt.obj == ex);
+        evt.obj.addEvent(evt.type, function() {
           this.setState(name);
         }.bind(this));
+        window.foo = evt.obj;
+        console.log(evt.obj);
       }, this);
-    }, this);
+    }
   },
 
   state: function() {
