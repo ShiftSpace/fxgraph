@@ -6,7 +6,7 @@
 .start
 {
   background-color: #f00;
-  left: 200px;
+  left: 100px;
   top: 200px;
   width: 100px;
   height: 100px;
@@ -15,8 +15,17 @@
 .step1
 {
   background-color: #00f;
-  left: 500px;
-  top: 300px;
   width: 200px;
-  height: 50px;
+}
+
+.step2
+{
+  background-color: #0f0;
+  width: 300px;
+}
+
+.step3
+{
+  background-color: #f50;
+  width: 400px;
 }

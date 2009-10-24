@@ -1,18 +1,27 @@
 window.addEvent('domready', init);
 
+
 var Example = new Class({
   Implements: [Options, Events],
   name: 'Example',
   
   initialize: function() {
     window.addEvent('keydown', function(evt) {
-      if(evt.key == 'shift') this.fireEvent('shiftdown');
+      evt = new Event(evt);
+      if(evt.code == 16) {
+        this.fireEvent('shiftdown');
+      }
     }.bind(this));
+
     window.addEvent('keyup', function(evt) {
-      if(evt.key == 'shift') this.fireEvent('shiftup');
+      evt = new Event(evt)
+      if(evt.code == 16) {
+        this.fireEvent('shiftup');
+      }
     }.bind(this));
   }
 });
+
 
 var ex;
 function init() {
@@ -24,10 +33,12 @@ function init() {
     transition: Fx.Transitions.Cubic.easeIn,
     graph: {
       start: {
+        first: true,
         next: 'step1',
         selector: '.start',
         events: [
-          {type:'shiftdown', direction:'next'}
+          {type:'shiftdown', direction:'next'},
+          {type:'shiftup', state:'start'}
         ]
       },
       step1: {

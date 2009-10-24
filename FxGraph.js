@@ -12,7 +12,7 @@ Fx.Graph = new Class({
     this.element = ($type(el) == 'string') ? $(el) : el;
     this.controller = options.controller;
     this.graph = options.graph;
-    this.direction = null;
+    this.direction = 'next';
     this.processStates(options.graph);
     this.element.set('morph', {
       duration: options.duration,
@@ -30,22 +30,25 @@ Fx.Graph = new Class({
       graph - the graph object passed in via the initialize options.
   */
   processStates: function(graph){
-    for(var name in graph) {
-      state = graph[name];
-      if(state.first) this.setState(name, false);
-      if(state.events) state.events.each(function(evt) {
-        this.controller.addEvent(evt.type, function(evt) {
+    $H(graph).each(function(state, name) {
+      if(state.first) {
+        this.setState(name, false);
+        this.arrived = true;
+      }
+      if(state.events) state.events.each(function(stateEvent) {
+        this.controller.addEvent(stateEvent.type, function(evt) {
+          if(this.currentState != name || !this.arrived) return;
           var nextState;
-          if(evt.direction) {
-            this.direction = evt.direction;
+          if(stateEvent.direction) {
+            this.direction = stateEvent.direction;
             nextState = state[this.direction];
           } else {
-            nextState = event.state;
+            nextState = stateEvent.state;
           }
           this.setState(nextState);
         }.bind(this));
       }, this);
-    }
+    }, this);
   },
 
   /*
@@ -60,6 +63,8 @@ Fx.Graph = new Class({
       of triggering the morph to that state.
   */
   setState: function(name, animate) {
+    console.log('setState', name);
+    this.arrived = false;
     this.currentState = name;
     if(animate === false) return;
     var state = this.graph[name];
@@ -74,6 +79,7 @@ Fx.Graph = new Class({
       is based on the current direction of the graph.
   */
   onStateArrive: function() {
+    this.arrived = true;
     var state = this.currentState;
     if(state.onComplete) state.onComplete();
     if(state.hold) {
