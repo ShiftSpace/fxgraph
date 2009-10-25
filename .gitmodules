@@ -1,0 +1,6 @@
+[submodule "externals/set"]
+	path = externals/set
+	url = git://github.com/ShiftSpace/set.git
+[submodule "externals/functools"]
+	path = externals/functools
+	url = git://github.com/ShiftSpace/functools.git
