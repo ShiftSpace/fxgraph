@@ -47,6 +47,10 @@ Fx.Graph = new Class({
       if(state.events) state.events.each(function(stateEvent) {
         this.controller.addEvent(stateEvent.type, function(evt) {
           if(this.currentState != name) return;
+          if(stateEvent.flag) this.flags[stateEvent.flag] = true
+          if(stateEvent.unflag) delete this.flags[stateEvent.unflag];
+          var not = $get(stateEvent, 'condition', 'not');
+          if(not && (new Set($H(this.flags).getKeys())).aintersection(not).length != 0) return;
           var nextState;
           if(stateEvent.direction) {
             this.direction = stateEvent.direction;
@@ -59,8 +63,6 @@ Fx.Graph = new Class({
             this.delays.each($clear);
             this.delays = [];
           }
-          if(stateEvent.flag) this.flags[stateEvent.flag] = true
-          if(stateEvent.unflag) delete this.flags[stateEvent.unflag];
           this.setState(nextState);
         }.bind(this));
       }, this);
@@ -96,6 +98,7 @@ Fx.Graph = new Class({
     this.currentState = this.transitionState;
     var state = this.graph[this.currentState];
     if(state.onComplete) state.onComplete();
+    if(state.last) return;
     if(state.hold) {
       this.delays.push(this.setState.delay(state.hold.duration, this, [state[this.direction]]));
     } else if(state[this.direction]) {

@@ -27,6 +27,11 @@ var Example = new Class({
       evt = new Event(evt);
       this.fireEvent('mouseover');
     }.bind(this));
+    
+    $('box1').addEvent('mouseleave', function(evt) {
+      evt = new Event(evt);
+      this.fireEvent('mouseout');
+    }.bind(this));
   }
 });
 
@@ -76,10 +81,11 @@ function init() {
         ]
       },
       step3: {
+        last: true,
         previous: 'step2',
         selector: '.step3',
         events: [
-          {type: 'mouseout', state: 'step1'},
+          {type: 'mouseout', state: 'step1', direction: 'previous'},
           {type: 'reset', state: 'step1', direction: 'previous'}
         ]
       }
