@@ -89,7 +89,9 @@ function init() {
           {type: 'hidemenu', unflag:'menu'},
           {type: 'showconsole', flag:'console'},
           {type: 'hideconsole', unflag:'console'},
+          {type: 'mouseover', flag:'mouse'},
           {type: 'mouseout', state: 'step1', direction: 'previous', unflag:'mouse', condition: {not: ['shift', 'menu', 'console']}},
+          {type: 'shiftdown', flag:'shift'},
           {type: 'shiftup', state: 'step1', direction: 'previous', unflag:'shift', condition: {not: ['mouse']}},
           {type: 'reset', state: 'step1', direction: 'previous'}
         ]
