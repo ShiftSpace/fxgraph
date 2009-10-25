@@ -74,7 +74,7 @@ function init() {
         selector: '.step2',
         hold: {duration: 1000},
         events: [
-          {type: 'mouseover', direction: 'step3', flag: 'mouse'},
+          {type: 'mouseover', direction: 'next', flag: 'mouse'},
           {type: 'mouseout', state: 'start', direction:'previous', unflag: 'mouse', condition: {not: ['shift']}},
           {type: 'shiftdown', direction: 'next', flag: 'shift', condition: {not: ['mouse']}},
           {type: 'shiftup', direction: 'previous', unflag: 'shift', condition: {not: ['mouse']}}
