@@ -1,3 +1,8 @@
+// ==Builder==
+// @required
+// @package        FxGraph
+// ==/Builder==
+
 /*
   Class: Fx.Graph
     Class for simplifying multistep animations that are driven by
