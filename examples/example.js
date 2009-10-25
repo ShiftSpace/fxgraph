@@ -85,7 +85,12 @@ function init() {
         previous: 'step2',
         selector: '.step3',
         events: [
-          {type: 'mouseout', state: 'step1', direction: 'previous'},
+          {type: 'showmenu', flag:'menu'},
+          {type: 'hidemenu', unflag:'menu'},
+          {type: 'showconsole', flag:'console'},
+          {type: 'hideconsole', unflag:'console'},
+          {type: 'mouseout', state: 'step1', direction: 'previous', unflag:'mouse', condition: {not: ['shift', 'menu', 'console']}},
+          {type: 'shiftup', state: 'step1', direction: 'previous', unflag:'shift', condition: {not: ['mouse']}},
           {type: 'reset', state: 'step1', direction: 'previous'}
         ]
       }

@@ -49,6 +49,7 @@ Fx.Graph = new Class({
           if(this.currentState != name) return;
           if(stateEvent.flag) this.flags[stateEvent.flag] = true
           if(stateEvent.unflag) delete this.flags[stateEvent.unflag];
+          if(!stateEvent.direction && !stateEvent.state) return;
           var not = $get(stateEvent, 'condition', 'not');
           if(not && (new Set($H(this.flags).getKeys())).aintersection(not).length != 0) return;
           var nextState;
