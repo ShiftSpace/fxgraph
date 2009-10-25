@@ -74,7 +74,7 @@ function init() {
         selector: '.step2',
         hold: {duration: 1000},
         events: [
-          {type: 'mouseover', direction: 'step3', flag: 'mouse'},
+          {type: 'mouseover', direction: 'next', flag: 'mouse'},
           {type: 'mouseout', state: 'start', direction:'previous', unflag: 'mouse', condition: {not: ['shift']}},
           {type: 'shiftdown', direction: 'next', flag: 'shift', condition: {not: ['mouse']}},
           {type: 'shiftup', direction: 'previous', unflag: 'shift', condition: {not: ['mouse']}}
@@ -89,11 +89,18 @@ function init() {
           {type: 'hidemenu', unflag:'menu'},
           {type: 'showconsole', flag:'console'},
           {type: 'hideconsole', unflag:'console'},
+          {type: 'mouseover', flag:'mouse'},
           {type: 'mouseout', state: 'step1', direction: 'previous', unflag:'mouse', condition: {not: ['shift', 'menu', 'console']}},
+          {type: 'shiftdown', flag:'shift'},
           {type: 'shiftup', state: 'step1', direction: 'previous', unflag:'shift', condition: {not: ['mouse']}},
           {type: 'reset', state: 'step1', direction: 'previous'}
         ]
       }
     }
+  });
+  
+  $('step3').addEvent('click', function(evt) {
+    evt = new Event(evt);
+    fxgraph.setState('step3', false);
   });
 }

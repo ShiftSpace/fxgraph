@@ -1,6 +1,14 @@
 #box1
 {
+}
+
+.base
+{
   position: absolute;
+  left: 100px;
+  top: 200px;
+  width: 100px;
+  height: 100px;
 }
 
 .start

@@ -88,10 +88,13 @@ Fx.Graph = new Class({
   */
   setState: function(name, animate) {
     this.transitionState = name;
-    if(animate === false) return;
     var state = this.graph[name];
     this.cancel();
-    this.element.morph(state.selector);
+    if(animate !== false) {
+      this.element.morph(state.selector);
+    } else {
+      this.onStateArrive();
+    }
   },
   
   /*
@@ -101,6 +104,14 @@ Fx.Graph = new Class({
       is based on the current direction of the graph.
   */
   onStateArrive: function() {
+    function fix(selector) {
+      return selector.substr(1, selector.length-1);
+    };
+    this.element.removeClass(fix(this.graph[this.currentState].selector));
+    this.element.addClass(fix(this.graph[this.transitionState].selector));
+    Fx.Graph.clear.each(function(style) {
+      this.element.setStyle(style, '');
+    }, this);
     this.currentState = this.transitionState;
     var state = this.graph[this.currentState];
     if(state.onComplete) state.onComplete();
@@ -120,3 +131,5 @@ Fx.Graph = new Class({
     this.element.get('morph').cancel();
   }
 });
+
+Fx.Graph.clear = ['width', 'height', 'left', 'right', 'top', 'bottom', 'background-color', 'opacity', 'visibility'];
