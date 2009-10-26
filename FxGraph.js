@@ -87,8 +87,15 @@ Fx.Graph = new Class({
       of triggering the morph to that state.
   */
   setState: function(name, animate) {
+    SSLog("SET STATE:", name, "OLD:", this.transitionState, SSLogForce);
+    var exitFn = $get(this.graph, this.transitionState, 'onExit');
+    if(exitFn) {
+      SSLog("EXIT FN", SSLogForce);
+      exitFn(this.element, this);
+    }
     this.transitionState = name;
     var state = this.graph[name];
+    if(state.onStart) state.onStart(this.element, this);
     this.cancel();
     if(animate !== false) {
       this.element.morph(state.selector);
@@ -104,6 +111,7 @@ Fx.Graph = new Class({
       is based on the current direction of the graph.
   */
   onStateArrive: function() {
+    SSLog("STATE ARRIVE:", this.transitionState, SSLogForce);
     function fix(selector) {
       return selector.substr(1, selector.length-1);
     };
@@ -112,9 +120,14 @@ Fx.Graph = new Class({
     Fx.Graph.clear.each(function(style) {
       this.element.setStyle(style, '');
     }, this);
+    var exitFn = $get(this.graph, this.currentState, 'onExit');
+    if(exitFn) {
+      SSLog("EXIT FN", SSLogForce);
+      exitFn(this.element, this);
+    }
     this.currentState = this.transitionState;
     var state = this.graph[this.currentState];
-    if(state.onComplete) state.onComplete();
+    if(state.onComplete) state.onComplete(this.element, this);
     if(state.last) return;
     if(state.hold) {
       this.delays.push(this.setState.delay(state.hold.duration, this, [state[this.direction]]));
