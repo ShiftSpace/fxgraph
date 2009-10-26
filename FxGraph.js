@@ -65,14 +65,18 @@ Fx.Graph = new Class({
           if(stateEvent.state) {
             nextState = stateEvent.state;
           }
-          if(this.delays.length > 0) {
-            this.delays.each($clear);
-            this.delays = [];
-          }
+          this.clearTimers();
           this.setState(nextState);
         }.bind(this));
       }, this);
     }, this);
+  },
+  
+  clearTimers: function() {
+    if(this.delays.length > 0) {
+      this.delays.each($clear);
+      this.delays = [];
+    }
   },
 
   /*
@@ -85,12 +89,15 @@ Fx.Graph = new Class({
     Function: setState
       Set the current state of the graph. Has the side effect
       of triggering the morph to that state.
+      
+    Parameters:
+      name - the name of the state.
+      animate - flag for animating to the state. defaults to true.
+      direction - the direction the animation is going.
   */
-  setState: function(name, animate) {
-    SSLog("SET STATE:", name, "OLD:", this.transitionState, SSLogForce);
+  setState: function(name, animate, direction) {
     var exitFn = $get(this.graph, this.transitionState, 'onExit');
     if(exitFn) {
-      SSLog("EXIT FN", SSLogForce);
       exitFn(this.element, this);
     }
     this.transitionState = name;
@@ -98,7 +105,11 @@ Fx.Graph = new Class({
     if(state.onStart) state.onStart(this.element, this);
     this.cancel();
     if(animate !== false) {
-      this.element.morph(state.selector);
+      var morph = state.selector;
+      if(!morph) {
+        morph = ($callable(state.styles)) ? state.styles() : state.styles;
+      }
+      this.element.morph(morph);
     } else {
       this.onStateArrive();
     }
@@ -111,20 +122,18 @@ Fx.Graph = new Class({
       is based on the current direction of the graph.
   */
   onStateArrive: function() {
-    SSLog("STATE ARRIVE:", this.transitionState, SSLogForce);
     function fix(selector) {
       return selector.substr(1, selector.length-1);
     };
-    this.element.removeClass(fix(this.graph[this.currentState].selector));
-    this.element.addClass(fix(this.graph[this.transitionState].selector));
+    if(this.graph[this.currentState].selector) {
+      this.element.removeClass(fix(this.graph[this.currentState].selector));
+    }
+    if(this.graph[this.transitionState].selector) {
+      this.element.addClass(fix(this.graph[this.transitionState].selector));
+    }
     Fx.Graph.clear.each(function(style) {
       this.element.setStyle(style, '');
     }, this);
-    var exitFn = $get(this.graph, this.currentState, 'onExit');
-    if(exitFn) {
-      SSLog("EXIT FN", SSLogForce);
-      exitFn(this.element, this);
-    }
     this.currentState = this.transitionState;
     var state = this.graph[this.currentState];
     if(state.onComplete) state.onComplete(this.element, this);
@@ -140,7 +149,8 @@ Fx.Graph = new Class({
     Function: cancel
       Cancel the current animation.
   */
-  cancel: function() {
+  cancel: function(clearTimers) {
+    if(clearTimers === true) this.clearTimers();
     this.element.get('morph').cancel();
   }
 });
