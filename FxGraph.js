@@ -96,6 +96,7 @@ Fx.Graph = new Class({
       direction - the direction the animation is going.
   */
   setState: function(name, animate, direction) {
+    if (direction) this.direction = direction;
     var exitFn = $get(this.graph, this.transitionState, 'onExit');
     if(exitFn) {
       exitFn(this.element, this);
