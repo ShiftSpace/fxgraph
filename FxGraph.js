@@ -26,6 +26,7 @@ Fx.Graph = new Class({
     this.controller = options.controller;
     this.graph = options.graph;
     this.direction = 'next';
+    this.directions = {};
     this.delays = [];
     this.flags = {};
     this.processStates(options.graph);
@@ -46,9 +47,7 @@ Fx.Graph = new Class({
   */
   processStates: function(graph){
     $H(graph).each(function(state, name) {
-      if(state.first) {
-        this.currentState = name;
-      }
+      if(state.first) this.currentState = name;
       if(state.events) state.events.each(function(stateEvent) {
         this.controller.addEvent(stateEvent.type, function(evt) {
           if(this.currentState != name) return;
@@ -62,9 +61,7 @@ Fx.Graph = new Class({
             this.direction = stateEvent.direction;
             nextState = state[this.direction];
           } 
-          if(stateEvent.state) {
-            nextState = stateEvent.state;
-          }
+          if(stateEvent.state) nextState = stateEvent.state;
           this.clearTimers();
           this.setState(nextState);
         }.bind(this));
@@ -72,6 +69,22 @@ Fx.Graph = new Class({
     }, this);
   },
   
+  
+  handleEventForState: function(state, eventType, event)
+  {
+    
+  },
+  
+  
+  getDirections: function(state, graph)
+  {
+    
+  },
+  
+  /*
+    Function: clearTimers
+      Clear any hold timers.
+  */
   clearTimers: function() {
     if(this.delays.length > 0) {
       this.delays.each($clear);
@@ -97,19 +110,20 @@ Fx.Graph = new Class({
         direction: the direction the animation is going.
   */
   setState: function(name, options) {
-    var direction = $get(options, 'direction'), animate = $get(options, 'animate');
+    var direction = $get(options, 'direction'),
+        animate = $get(options, 'animate'),
+        exitFn = $get(this.graph, this.transitionState, 'onExit'),
+        state = this.graph[name];
+        
     if (direction) this.direction = direction;
-    var exitFn = $get(this.graph, this.transitionState, 'onExit');
     if(exitFn) exitFn(this.element, this);
     this.transitionState = name;
-    var state = this.graph[name];
     if(state.onStart) state.onStart(this.element, this);
     this.cancel();
+    
     if(animate !== false) {
       var morph = state.selector;
-      if(!morph) {
-        morph = ($callable(state.styles)) ? state.styles() : state.styles;
-      }
+      if(!morph) morph = ($callable(state.styles)) ? state.styles() : state.styles;
       this.element.morph(morph);
     } else {
       this.onStateArrive();
@@ -126,19 +140,22 @@ Fx.Graph = new Class({
     function fix(selector) {
       return selector.substr(1, selector.length-1);
     };
-    if(this.graph[this.currentState].selector) {
-      this.element.removeClass(fix(this.graph[this.currentState].selector));
-    }
-    if(this.graph[this.transitionState].selector) {
-      this.element.addClass(fix(this.graph[this.transitionState].selector));
-    }
+
+    if(this.graph[this.currentState].selector) this.element.removeClass(fix(this.graph[this.currentState].selector));
+    if(this.graph[this.transitionState].selector) this.element.addClass(fix(this.graph[this.transitionState].selector));
+
     Fx.Graph.clear.each(function(style) {
       this.element.setStyle(style, '');
     }, this);
+
     this.currentState = this.transitionState;
+
     var state = this.graph[this.currentState];
+
     if(state.onComplete) state.onComplete(this.element, this);
+
     if(state.last) return;
+
     if(state.hold) {
       this.delays.push(this.setState.delay(state.hold.duration, this, [state[this.direction]]));
     } else if(state[this.direction]) {
