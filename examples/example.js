@@ -36,11 +36,10 @@ var Example = new Class({
 });
 
 
-var ex;
+var ex, fxgraph;
 function init() {
   ex = new Example();
-
-  var fxgraph = new Fx.Graph($('box1'), {
+  fxgraph = new Fx.Graph($('box1'), {
     controller: ex,
     duration: 400,
     transition: Fx.Transitions.Cubic.easeIn,
@@ -51,9 +50,9 @@ function init() {
         selector: '.start',
         events: [
           {type: 'mouseover', state: 'step3', flag: 'mouse'},
-          {type: 'mouseout', state: 'start', direction:'previous', unflag: 'mouse', condition: {not: ['shift']}},
+          {type: 'mouseout', state: 'start', unflag: 'mouse', condition: {not: ['shift']}},
           {type: 'shiftdown', direction: 'next', flag: 'shift', condition: {not: ['mouse']}},
-          {type: 'shiftup', state: 'start', direction: 'previous', unflag: 'shift', condition: {not: ['mouse']}}
+          {type: 'shiftup', state: 'start', unflag: 'shift', condition: {not: ['mouse']}}
         ]
       },
       step1: {
@@ -63,9 +62,9 @@ function init() {
         hold: {duration: 1000},
         events: [
           {type: 'mouseover', state: 'step3', flag: 'mouse'},
-          {type: 'mouseout', state: 'start', direction:'previous', unflag: 'mouse', condition: {not: ['shift']}},
+          {type: 'mouseout', state: 'start', unflag: 'mouse', condition: {not: ['shift']}},
           {type: 'shiftdown', direction: 'next', flag: 'shift', condition: {not: ['mouse']}},
-          {type: 'shiftup', state: 'start', direction: 'previous', unflag: 'shift', condition: {not: ['mouse']}}
+          {type: 'shiftup', state: 'start', unflag: 'shift', condition: {not: ['mouse']}}
         ]
       },
       step2: {
@@ -75,7 +74,7 @@ function init() {
         hold: {duration: 1000},
         events: [
           {type: 'mouseover', direction: 'next', flag: 'mouse'},
-          {type: 'mouseout', state: 'start', direction:'previous', unflag: 'mouse', condition: {not: ['shift']}},
+          {type: 'mouseout', state: 'start', unflag: 'mouse', condition: {not: ['shift']}},
           {type: 'shiftdown', direction: 'next', flag: 'shift', condition: {not: ['mouse']}},
           {type: 'shiftup', direction: 'previous', unflag: 'shift', condition: {not: ['mouse']}}
         ]
@@ -90,10 +89,10 @@ function init() {
           {type: 'showconsole', flag:'console'},
           {type: 'hideconsole', unflag:'console'},
           {type: 'mouseover', flag:'mouse'},
-          {type: 'mouseout', state: 'step1', direction: 'previous', unflag:'mouse', condition: {not: ['shift', 'menu', 'console']}},
+          {type: 'mouseout', state: 'step1', unflag:'mouse', condition: {not: ['shift', 'menu', 'console']}},
           {type: 'shiftdown', flag:'shift'},
-          {type: 'shiftup', state: 'step1', direction: 'previous', unflag:'shift', condition: {not: ['mouse']}},
-          {type: 'reset', state: 'step1', direction: 'previous'}
+          {type: 'shiftup', state: 'step1', unflag:'shift', condition: {not: ['mouse']}},
+          {type: 'reset', state: 'step1'}
         ]
       }
     }

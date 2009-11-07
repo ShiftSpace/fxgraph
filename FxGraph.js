@@ -23,13 +23,17 @@ Fx.Graph = new Class({
   */
   initialize: function(el, options) {
     this.element = ($type(el) == 'string') ? $(el) : el;
+    
     this.controller = options.controller;
     this.graph = options.graph;
+    
     this.direction = 'next';
+    
     this.directions = {};
     this.delays = [];
     this.flags = {};
     this.processStates(options.graph);
+    
     this.element.set('morph', {
       duration: options.duration,
       transition: options.transition,
@@ -48,6 +52,7 @@ Fx.Graph = new Class({
   processStates: function(graph){
     $H(graph).each(function(state, name) {
       if(state.first) this.currentState = name;
+      this.getDirections(name, graph);
       if(state.events) state.events.each(function(stateEvent) {
         this.controller.addEvent(stateEvent.type, function(evt) {
           if(this.currentState != name) return;
@@ -69,16 +74,36 @@ Fx.Graph = new Class({
     }, this);
   },
   
-  
+  /*
+    Function: handleEventForState
+      
+  */
   handleEventForState: function(state, eventType, event)
   {
     
   },
   
-  
+  /*
+    Function: getDirections
+      Determine the direction relationships between a state and other states on the graph.
+      
+    Parameters:
+      state - a state name.
+      graph - the graph to examine.
+  */
   getDirections: function(state, graph)
   {
-    
+    var result = {};
+    function collect(dir, r) {
+      var curState = state;
+      while(graph[curState][dir]) {
+        var ns = graph[curState][dir];
+        r[ns] = dir;
+        curState = ns;
+      }
+      return r;
+    };
+    this.directions[state] = collect('previous', collect('next', {}));
   },
   
   /*
@@ -115,7 +140,12 @@ Fx.Graph = new Class({
         exitFn = $get(this.graph, this.transitionState, 'onExit'),
         state = this.graph[name];
         
-    if (direction) this.direction = direction;
+    if (direction){
+      this.direction = direction;
+    } else {
+      this.direction = this.directions[$pick(this.transitionState, this.currentState)][name];
+    }
+    
     if(exitFn) exitFn(this.element, this);
     this.transitionState = name;
     if(state.onStart) state.onStart(this.element, this);
@@ -149,11 +179,8 @@ Fx.Graph = new Class({
     }, this);
 
     this.currentState = this.transitionState;
-
     var state = this.graph[this.currentState];
-
     if(state.onComplete) state.onComplete(this.element, this);
-
     if(state.last) return;
 
     if(state.hold) {
