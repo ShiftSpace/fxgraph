@@ -98,6 +98,13 @@ function init() {
     }
   });
   
+  window.addEvent('keydown', function(evt) {
+    evt = new Event(evt);
+    if(evt.key == 'z') {
+      fxgraph.setState('step1', {direction:'previous', hold:{duration:3000}});
+    }
+  });
+  
   $('step3').addEvent('click', function(evt) {
     evt = new Event(evt);
     fxgraph.setState('step3', {animate:false});

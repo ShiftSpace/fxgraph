@@ -137,6 +137,7 @@ Fx.Graph = new Class({
   setState: function(name, options) {
     var direction = $get(options, 'direction'),
         animate = $get(options, 'animate'),
+        hold = $get(options, 'hold') || this.graph[name].hold,
         exitFn = $get(this.graph, this.transitionState, 'onExit'),
         state = this.graph[name];
         
@@ -154,9 +155,11 @@ Fx.Graph = new Class({
     if(animate !== false) {
       var morph = state.selector;
       if(!morph) morph = ($callable(state.styles)) ? state.styles() : state.styles;
+      this.element.get('morph').removeEvents('onComplete');
+      this.element.get('morph').addEvent('onComplete', this.onStateArrive.bind(this, [hold]));
       this.element.morph(morph);
     } else {
-      this.onStateArrive();
+      this.onStateArrive(hold);
     }
   },
   
@@ -166,7 +169,7 @@ Fx.Graph = new Class({
       a hold, delayed execution to the next state. The next state
       is based on the current direction of the graph.
   */
-  onStateArrive: function() {
+  onStateArrive: function(hold) {
     function fix(selector) {
       return selector.substr(1, selector.length-1);
     };
@@ -183,8 +186,8 @@ Fx.Graph = new Class({
     if(state.onComplete) state.onComplete(this.element, this);
     if(state.last) return;
 
-    if(state.hold) {
-      this.delays.push(this.setState.delay(state.hold.duration, this, [state[this.direction]]));
+    if(hold) {
+      this.delays.push(this.setState.delay(hold.duration, this, [state[this.direction]]));
     } else if(state[this.direction]) {
       this.setState(state[this.direction]);
     }
