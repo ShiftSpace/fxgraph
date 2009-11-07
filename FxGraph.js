@@ -92,15 +92,15 @@ Fx.Graph = new Class({
       
     Parameters:
       name - the name of the state.
-      animate - flag for animating to the state. defaults to true.
-      direction - the direction the animation is going.
+      options -
+        animate: flag for animating to the state. defaults to true.
+        direction: the direction the animation is going.
   */
-  setState: function(name, animate, direction) {
+  setState: function(name, options) {
+    var direction = $get(options, 'direction'), animate = $get(options, 'animate');
     if (direction) this.direction = direction;
     var exitFn = $get(this.graph, this.transitionState, 'onExit');
-    if(exitFn) {
-      exitFn(this.element, this);
-    }
+    if(exitFn) exitFn(this.element, this);
     this.transitionState = name;
     var state = this.graph[name];
     if(state.onStart) state.onStart(this.element, this);

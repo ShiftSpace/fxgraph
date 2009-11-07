@@ -101,6 +101,6 @@ function init() {
   
   $('step3').addEvent('click', function(evt) {
     evt = new Event(evt);
-    fxgraph.setState('step3', false);
+    fxgraph.setState('step3', {animate:false});
   });
 }
