@@ -139,9 +139,10 @@ Fx.Graph = new Class({
         animate = $get(options, 'animate'),
         hold = $get(options, 'hold') || this.graph[name].hold,
         exitFn = $get(this.graph, this.transitionState, 'onExit'),
-        state = this.graph[name];
-        
-    if (direction){
+        state = this.graph[name],
+        stop = $get(options, 'stop');
+
+    if (direction) {
       this.direction = direction;
     } else {
       this.direction = this.directions[$pick(this.transitionState, this.currentState)][name];
@@ -159,7 +160,7 @@ Fx.Graph = new Class({
       this.element.get('morph').addEvent('onComplete', this.onStateArrive.bind(this, [hold]));
       this.element.morph(morph);
     } else {
-      this.onStateArrive(hold);
+      this.onStateArrive(hold, stop);
     }
   },
   
@@ -168,8 +169,12 @@ Fx.Graph = new Class({
       Call on each time the graph arrives at a state. If there's
       a hold, delayed execution to the next state. The next state
       is based on the current direction of the graph.
+
+    Parameters:
+      hold - the duration in milliseconds to hold on the state before continuing.
+      stop - do no continue to the next state.
   */
-  onStateArrive: function(hold) {
+  onStateArrive: function(hold, stop) {
     function fix(selector) {
       return selector.substr(1, selector.length-1);
     };
@@ -186,10 +191,12 @@ Fx.Graph = new Class({
     if(state.onComplete) state.onComplete(this.element, this);
     if(state.last) return;
 
-    if(hold) {
-      this.delays.push(this.setState.delay(hold.duration, this, [state[this.direction]]));
-    } else if(state[this.direction]) {
-      this.setState(state[this.direction]);
+    if(stop !== true) {
+      if(hold) {
+        this.delays.push(this.setState.delay(hold.duration, this, [state[this.direction]]));
+      } else if(state[this.direction]) {
+        this.setState(state[this.direction]);
+      }
     }
   },
   
